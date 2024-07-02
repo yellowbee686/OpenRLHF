@@ -16,8 +16,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y tzdata
 RUN apt-get -y install build-essential git python3-dev python3-pip libopenexr-dev libxi-dev libglfw3-dev libglew-dev libomp-dev libxinerama-dev libxcursor-dev gdb
 RUN pip uninstall xgboost transformer_engine flash_attn -y
 RUN python -m pip install --upgrade pip
-RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple vllm==0.4.2
-# RUN pip install vllm==0.4.2
+# RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple vllm==0.4.2
+RUN pip install vllm==0.4.2
 # RUN pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org vllm==0.4.2
 
 COPY docker-entrypoint.sh .
