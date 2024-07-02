@@ -17,7 +17,7 @@ RUN apt-get -y install build-essential git python3-dev python3-pip libopenexr-de
 RUN pip uninstall xgboost transformer_engine flash_attn -y
 RUN python -m pip install --upgrade pip
 # 以下为vllm的依赖，可能会卡在这些安装处，因此尝试手动安装
-RUN pip install --no-cache-dir vllm_nccl_cu12==2.18.1.0.4.0
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple vllm_nccl_cu12==2.18.1.0.4.0
 # tinghua源找不到对应版本的vllm
 # RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple vllm==0.4.2
 # RUN pip install vllm==0.4.2
