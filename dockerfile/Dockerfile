@@ -17,8 +17,8 @@ RUN apt-get -y install build-essential git python3-dev python3-pip libopenexr-de
 RUN pip uninstall xgboost transformer_engine flash_attn -y
 RUN python -m pip install --upgrade pip
 # RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple vllm==0.4.2
-RUN pip install vllm==0.4.2
-# RUN pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org vllm==0.4.2
+# RUN pip install vllm==0.4.2
+RUN pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org vllm==0.4.2
 
 COPY docker-entrypoint.sh .
 RUN chmod a+x docker-entrypoint.sh
