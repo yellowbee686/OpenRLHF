@@ -22,7 +22,7 @@ RUN pip install vllm_nccl_cu12==2.18.1.0.4.0
 # RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple vllm==0.4.2
 # RUN pip install vllm==0.4.2
 # vllm的一些依赖的hash不对齐，尝试默认trust
-RUN pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --trusted-host pypi.ngc.nvidia.com vllm==0.4.2
+RUN pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --trusted-host pypi.ngc.nvidia.com --default-timeout=100 vllm==0.4.2
 
 COPY docker-entrypoint.sh .
 RUN chmod a+x docker-entrypoint.sh
