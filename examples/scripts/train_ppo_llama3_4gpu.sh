@@ -1,12 +1,12 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='2,3,4,5'
+export CUDA_VISIBLE_DEVICES='0'
 
 read -r -d '' training_commands <<EOF
 ../train_ppo.py \
     --pretrain RLHFlow/LLaMA3-SFT \
-    --reward_pretrain RLHFlow/ArmoRM-Llama3-8B-v0.1 \
-    --save_path ./ckpt/llama3_8b_armo \
+    --reward_pretrain sfairXC/FsfairX-LLaMA3-RM-v0.1 \
+    --save_path ./ckpt/llama3_8b_bt \
     --save_steps -1 \
     --logging_steps 1 \
     --eval_steps -1 \
@@ -23,7 +23,7 @@ read -r -d '' training_commands <<EOF
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
     --prompt_data OpenLLMAI/prompt-collection-v0.1 \
-    --prompt_data_probs 0.1 \
+    --prompt_data_probs 1.0 \
     --max_samples 80000 \
     --normalize_reward \
     --actor_init_on_gpu \
