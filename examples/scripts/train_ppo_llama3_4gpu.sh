@@ -1,6 +1,6 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='0'
+export CUDA_VISIBLE_DEVICES='0,1'
 
 read -r -d '' training_commands <<EOF
 ../train_ppo.py \
@@ -11,7 +11,6 @@ read -r -d '' training_commands <<EOF
     --logging_steps 1 \
     --eval_steps -1 \
     --micro_train_batch_size 2 \
-    --train_batch_size 128 \
     --micro_rollout_batch_size 4 \
     --rollout_batch_size 1024 \
     --max_epochs 1 \
@@ -22,7 +21,7 @@ read -r -d '' training_commands <<EOF
     --actor_learning_rate 5e-7 \
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
-    --prompt_data OpenLLMAI/prompt-collection-v0.1 \
+    --prompt_data RLHFlow/test_generation_2k \
     --prompt_data_probs 1.0 \
     --max_samples 80000 \
     --normalize_reward \
