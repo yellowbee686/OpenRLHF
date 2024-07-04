@@ -33,5 +33,5 @@ EOF
      # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
 if [[ ${1} != "slurm" ]]; then
-    deepspeed $training_commands --include=localhost:0,1,2,3
+    deepspeed --include=localhost:0,1,2,3 $training_commands 
 fi
