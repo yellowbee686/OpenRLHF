@@ -10,7 +10,7 @@ read -r -d '' training_commands <<EOF
     --save_steps -1 \
     --logging_steps 1 \
     --eval_steps -1 \
-    --micro_train_batch_size 2 \
+    --micro_train_batch_size 4 \
     --micro_rollout_batch_size 4 \
     --rollout_batch_size 1024 \
     --max_epochs 1 \
@@ -21,7 +21,7 @@ read -r -d '' training_commands <<EOF
     --actor_learning_rate 5e-7 \
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
-    --prompt_data RLHFlow/test_generation_2k \
+    --prompt_data RLHFlow/iterative-prompt-v1-iter1-20K \
     --prompt_data_probs 1.0 \
     --max_samples 80000 \
     --normalize_reward \
