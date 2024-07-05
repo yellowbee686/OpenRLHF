@@ -33,5 +33,5 @@ EOF
      # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
 
-accelerate launch --config_file ./zero2_test.yaml $training_commands
+accelerate launch --config_file ./zero2_test.yaml --main_process_port 29505 $training_commands
 
