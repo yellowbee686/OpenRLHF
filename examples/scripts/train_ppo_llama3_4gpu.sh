@@ -33,5 +33,6 @@ EOF
      # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
 if [[ ${1} != "slurm" ]]; then
-    CUDA_VISIBLE_DEVICES=2,3,4,5 deepspeed --include=localhost:2,3,4,5 $training_commands 
+    # CUDA_VISIBLE_DEVICES=2,3,4,5 deepspeed --include=localhost:0,1,2,3 $training_commands 
+    torchrun --nproc_per_node=4 deepspeed $training_commands
 fi
