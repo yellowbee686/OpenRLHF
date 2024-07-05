@@ -1,6 +1,6 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='2,3,4,5'
+export CUDA_VISIBLE_DEVICES='1'
 
 read -r -d '' training_commands <<EOF
 ../train_ppo.py \
@@ -28,11 +28,12 @@ read -r -d '' training_commands <<EOF
     --actor_init_on_gpu \
     --adam_offload \
     --flash_attn \
+    --local_rank 1 \
     --gradient_checkpointing
 EOF
      # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
 if [[ ${1} != "slurm" ]]; then
     # CUDA_VISIBLE_DEVICES=2,3,4,5 deepspeed --include=localhost:0,1,2,3 $training_commands 
-    deepspeed --num_gpus=4 $training_commands
+    deepspeed $training_commands
 fi
