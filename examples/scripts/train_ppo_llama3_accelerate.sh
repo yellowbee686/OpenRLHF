@@ -32,7 +32,6 @@ read -r -d '' training_commands <<EOF
 EOF
      # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
-if [[ ${1} != "slurm" ]]; then
-    # CUDA_VISIBLE_DEVICES=2,3,4,5 deepspeed --include=localhost:0,1,2,3 $training_commands 
-    deepspeed $training_commands
-fi
+
+accelerate launch --config_file ./zero2_test.yaml $training_commands
+
