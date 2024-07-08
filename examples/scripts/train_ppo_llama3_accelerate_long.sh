@@ -28,6 +28,7 @@ read -r -d '' training_commands <<EOF
     --actor_init_on_gpu \
     --adam_offload \
     --flash_attn \
+    --save_value_network \
     --gradient_checkpointing
 EOF
      # --wandb [WANDB_TOKENS] or True (use wandb login command)
