@@ -251,6 +251,8 @@ class PPOTrainer(ABC):
 
                 pbar.update()
                 steps = steps + 1
+            # save for episode
+            self.save_checkpoints(args, f'ep{episode}')
 
         if self._wandb is not None and self.strategy.is_rank_0():
             self._wandb.finish()
@@ -497,19 +499,13 @@ class PPOTrainer(ABC):
         # save ckpt
         # TODO: save best model on dev, use loss/perplexity/others on whole dev dataset as metric
         if global_step % args.save_steps == 0:
-            tag = f"global_step{global_step}"
-            self._save_checkpoint(args, tag, client_states)
-
-    def _save_checkpoint(self, args, tag, client_states):
+            self.save_checkpoints(args, global_step)
+    
+    def save_checkpoints(self, args, global_step):
+        tag = f"global_step{global_step}"
         self.strategy.save_ckpt(
-            self.actor.model,
-            os.path.join(args.ckpt_path, "_actor"),
-            tag,
-            args.max_ckpt_num,
-            args.max_ckpt_mem,
-            client_states,
+            self.actor.model, os.path.join(args.ckpt_path, "_actor"), tag, args.max_ckpt_num, args.max_ckpt_mem
         )
-        if self.critic is not None:
-            self.strategy.save_ckpt(
-                self.critic, os.path.join(args.ckpt_path, "_critic"), tag, args.max_ckpt_num, args.max_ckpt_mem
-            )
+        self.strategy.save_ckpt(
+            self.critic, os.path.join(args.ckpt_path, "_critic"), tag, args.max_ckpt_num, args.max_ckpt_mem
+        )
