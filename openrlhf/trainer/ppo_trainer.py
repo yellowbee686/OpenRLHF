@@ -205,6 +205,8 @@ class PPOTrainer(ABC):
 
                 pbar.update()
                 steps = steps + 1
+            # save for episode
+            self.save_checkpoints(args, f'ep{episode}')
 
     def ppo_train(self, global_steps=0):
         # replay buffer may be empty at first, we should rebuild at each training
@@ -397,10 +399,13 @@ class PPOTrainer(ABC):
         # save ckpt
         # TODO: save best model on dev, use loss/perplexity/others on whole dev dataset as metric
         if global_step % args.save_steps == 0:
-            tag = f"global_step{global_step}"
-            self.strategy.save_ckpt(
-                self.actor.model, os.path.join(args.ckpt_path, "_actor"), tag, args.max_ckpt_num, args.max_ckpt_mem
-            )
-            self.strategy.save_ckpt(
-                self.critic, os.path.join(args.ckpt_path, "_critic"), tag, args.max_ckpt_num, args.max_ckpt_mem
-            )
+            self.save_checkpoints(args, global_step)
+    
+    def save_checkpoints(self, args, global_step):
+        tag = f"global_step{global_step}"
+        self.strategy.save_ckpt(
+            self.actor.model, os.path.join(args.ckpt_path, "_actor"), tag, args.max_ckpt_num, args.max_ckpt_mem
+        )
+        self.strategy.save_ckpt(
+            self.critic, os.path.join(args.ckpt_path, "_critic"), tag, args.max_ckpt_num, args.max_ckpt_mem
+        )
