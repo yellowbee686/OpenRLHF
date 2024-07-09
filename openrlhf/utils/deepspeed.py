@@ -199,7 +199,7 @@ class DeepspeedStrategy(ABC):
             train_batch_size *= 2
         
         ds_config["train_batch_size"] = train_batch_size
-        ds_config['train_micro_batch_size_per_gpu'] = train_batch_size / self.micro_train_batch_size / self.world_size
+        ds_config['gradient_accumulation_steps'] = train_batch_size / self.micro_train_batch_size / self.world_size
 
         return ds_config
 
