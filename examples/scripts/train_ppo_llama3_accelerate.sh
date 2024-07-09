@@ -12,7 +12,7 @@ read -r -d '' training_commands <<EOF
     --eval_steps -1 \
     --train_batch_size 64 \
     --micro_train_batch_size 2 \
-    --micro_rollout_batch_size 4 \
+    --micro_rollout_batch_size 2 \
     --rollout_batch_size 512 \
     --max_epochs 1 \
     --prompt_max_len 8192 \
