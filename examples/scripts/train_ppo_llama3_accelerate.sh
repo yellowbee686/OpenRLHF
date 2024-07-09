@@ -11,7 +11,7 @@ read -r -d '' training_commands <<EOF
     --logging_steps 1 \
     --eval_steps -1 \
     --train_batch_size 96 \
-    --micro_train_batch_size 4 \
+    --micro_train_batch_size 2 \
     --micro_rollout_batch_size 4 \
     --rollout_batch_size 768 \
     --max_epochs 1 \
