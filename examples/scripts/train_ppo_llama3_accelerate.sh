@@ -1,6 +1,6 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='1,2,7'
+export CUDA_VISIBLE_DEVICES='0,1,2,7'
 
 read -r -d '' training_commands <<EOF
 ../train_ppo.py \
@@ -10,10 +10,10 @@ read -r -d '' training_commands <<EOF
     --save_steps -1 \
     --logging_steps 1 \
     --eval_steps -1 \
-    --train_batch_size 96 \
+    --train_batch_size 128 \
     --micro_train_batch_size 2 \
     --micro_rollout_batch_size 4 \
-    --rollout_batch_size 768 \
+    --rollout_batch_size 1024 \
     --max_epochs 1 \
     --prompt_max_len 2048 \
     --generate_max_len 1024 \
