@@ -10,10 +10,10 @@ read -r -d '' training_commands <<EOF
     --save_steps -1 \
     --logging_steps 1 \
     --eval_steps -1 \
-    --train_batch_size 128 \
+    --train_batch_size 64 \
     --micro_train_batch_size 2 \
     --micro_rollout_batch_size 4 \
-    --rollout_batch_size 1024 \
+    --rollout_batch_size 512 \
     --max_epochs 1 \
     --prompt_max_len 1024 \
     --generate_max_len 1024 \
