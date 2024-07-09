@@ -1,6 +1,6 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='0,1,2,7'
+export CUDA_VISIBLE_DEVICES='2,7'
 
 read -r -d '' training_commands <<EOF
 ../train_ppo.py \
