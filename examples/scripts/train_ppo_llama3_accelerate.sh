@@ -21,7 +21,7 @@ read -r -d '' training_commands <<EOF
     --actor_learning_rate 5e-7 \
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
-    --prompt_data RLHFlow/iterative-prompt-v1-iter1-20K \
+    --prompt_data RLHFlow/test_generation_2k \
     --prompt_data_probs 1.0 \
     --max_samples 80000 \
     --normalize_reward \
