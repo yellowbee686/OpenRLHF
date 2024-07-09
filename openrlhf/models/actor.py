@@ -115,15 +115,17 @@ class Actor(nn.Module):
         Tuple[torch.LongTensor, torch.LongTensor],
         Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor],
     ]:
+        num_beams = kwargs.get("num_beams", 1)
+        early_stopping = True if num_beams > 1 else False
         generate_args = {
             "input_ids": input_ids,
             "top_k": kwargs.get("top_k", None),
             "top_p": kwargs.get("top_p", None),
             "do_sample": kwargs.get("do_sample", True),
-            "early_stopping": True,
+            "early_stopping": early_stopping,
             "temperature": kwargs.get("temperature", 1),
             "use_cache": True,
-            "num_beams": kwargs.get("num_beams", 1),
+            "num_beams": num_beams,
             "attention_mask": kwargs.get("attention_mask"),
             "eos_token_id": kwargs.get("eos_token_id"),
             "pad_token_id": kwargs.get("pad_token_id"),
