@@ -205,8 +205,6 @@ class PPOTrainer(ABC):
 
                 pbar.update()
                 steps = steps + 1
-            # save for episode
-            self.save_checkpoints(args, f'ep{episode}')
 
     def ppo_train(self, global_steps=0):
         # replay buffer may be empty at first, we should rebuild at each training
