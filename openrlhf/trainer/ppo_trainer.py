@@ -251,8 +251,6 @@ class PPOTrainer(ABC):
 
                 pbar.update()
                 steps = steps + 1
-            # save for episode
-            self.save_checkpoints(args, f'ep{episode}')
 
         if self._wandb is not None and self.strategy.is_rank_0():
             self._wandb.finish()

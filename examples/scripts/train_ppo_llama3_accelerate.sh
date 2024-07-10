@@ -8,13 +8,13 @@ read -r -d '' training_commands <<EOF
     --pretrain RLHFlow/LLaMA3-SFT \
     --reward_pretrain sfairXC/FsfairX-LLaMA3-RM-v0.1 \
     --save_path ./ckpt/llama3_8b_bt \
-    --save_steps -1 \
+    --save_steps 512 \
     --logging_steps 1 \
     --eval_steps -1 \
     --train_batch_size 64 \
     --micro_train_batch_size 1 \
     --micro_rollout_batch_size 2 \
-    --rollout_batch_size 512 \
+    --rollout_batch_size 1024 \
     --max_epochs 1 \
     --prompt_max_len 6144 \
     --generate_max_len 2048 \
