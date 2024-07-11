@@ -5,11 +5,13 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 read -r -d '' training_commands <<EOF
 ../train_ppo.py \
-    --pretrain RLHFlow/LLaMA3-SFT \
+    --pretrain ckpt/checkpoints_ppo/_actor \
     --reward_pretrain sfairXC/FsfairX-LLaMA3-RM-v0.1 \
+    --critic_pretrain ckpt/checkpoints_ppo/_critic \
     --save_path ./ckpt/llama3_8b_bt \
     --save_steps 2 \
     --max_ckpt_num 2 \
+    --ckpt_path ./ckpt/ppo_iter2 \
     --logging_steps 1 \
     --eval_steps -1 \
     --train_batch_size 96 \
@@ -24,7 +26,7 @@ read -r -d '' training_commands <<EOF
     --actor_learning_rate 5e-7 \
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
-    --prompt_data RLHFlow/iterative-prompt-v1-iter1-20K \
+    --prompt_data RLHFlow/iterative-prompt-v1-iter2-20K \
     --prompt_data_probs 1.0 \
     --max_samples 80000 \
     --normalize_reward \
