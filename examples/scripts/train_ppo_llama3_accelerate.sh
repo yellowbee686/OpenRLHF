@@ -7,12 +7,7 @@ read -r -d '' training_commands <<EOF
 ../train_ppo.py \
     --pretrain RLHFlow/LLaMA3-SFT \
     --reward_pretrain sfairXC/FsfairX-LLaMA3-RM-v0.1 \
-    # --critic_pretrain ckpt/checkpoints_ppo/_critic \
     --save_path ./ckpt/llama3_8b_bt \
-    # --save_steps 2 \
-    # --max_ckpt_num 2 \
-    # --ckpt_path ./ckpt/ppo_iter2 \
-    # --load_ckpt_path ./ckpt/checkpoints_ppo \
     --logging_steps 1 \
     --eval_steps -1 \
     --train_batch_size 64 \
