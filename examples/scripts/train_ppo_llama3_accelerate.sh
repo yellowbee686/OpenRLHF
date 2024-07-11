@@ -1,6 +1,6 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='3,7'
+export CUDA_VISIBLE_DEVICES='2,7'
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 read -r -d '' training_commands <<EOF
