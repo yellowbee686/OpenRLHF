@@ -10,7 +10,7 @@ read -r -d '' training_commands <<EOF
     --save_path ./ckpt/llama3_8b_bt \
     --logging_steps 1 \
     --save_steps 2 \
-    --max_ckpt_num 2 \
+    --max_ckpt_num 1 \
     --eval_steps -1 \
     --train_batch_size 64 \
     --micro_train_batch_size 1 \
