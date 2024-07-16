@@ -18,7 +18,7 @@ read -r -d '' training_commands <<EOF
     --rollout_batch_size 768 \
     --max_epochs 1 \
     --prompt_max_len 6144 \
-    --generate_max_len 2048 \
+    --generate_max_len 1024 \
     --zero_stage 2 \
     --bf16 \
     --actor_learning_rate 5e-7 \
