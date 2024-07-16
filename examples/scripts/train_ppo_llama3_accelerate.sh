@@ -1,6 +1,6 @@
 set -x 
 
-export CUDA_VISIBLE_DEVICES='4,5,6,7'
+export CUDA_VISIBLE_DEVICES='6,7'
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 read -r -d '' training_commands <<EOF
@@ -12,19 +12,19 @@ read -r -d '' training_commands <<EOF
     --save_steps 2 \
     --max_ckpt_num 1 \
     --eval_steps -1 \
-    --train_batch_size 64 \
+    --train_batch_size 128 \
     --micro_train_batch_size 1 \
     --micro_rollout_batch_size 2 \
-    --rollout_batch_size 512 \
+    --rollout_batch_size 1024 \
     --max_epochs 1 \
     --prompt_max_len 6144 \
-    --generate_max_len 2048 \
+    --generate_max_len 1024 \
     --zero_stage 2 \
     --bf16 \
     --actor_learning_rate 5e-7 \
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
-    --prompt_data RLHFlow/iterative-prompt-v1-iter3-20K \
+    --prompt_data RLHFlow/iterative-prompt-v1-iter1-20K \
     --prompt_data_probs 1.0 \
     --max_samples 80000 \
     --normalize_reward \
