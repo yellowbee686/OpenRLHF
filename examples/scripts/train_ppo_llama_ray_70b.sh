@@ -1,10 +1,9 @@
 set -x 
-export PATH=$HOME/.local/bin/:$PATH
 
 ray job submit --address="http://127.0.0.1:8265" \
-    --runtime-env-json='{"working_dir": "/openrlhf", "pip": "/openrlhf/requirements.txt"}' \
+    --runtime-env-json='{"working_dir": "/openrlhf"}' \
     --no-wait \
-    -- python3 examples/train_ppo_ray.py \
+    -- python3 -m openrlhf.cli.train_ppo_ray \
     --ref_num_nodes 1 \
     --ref_num_gpus_per_node 2 \
     --reward_num_nodes 1 \
@@ -30,7 +29,7 @@ ray job submit --address="http://127.0.0.1:8265" \
     --actor_learning_rate 5e-7 \
     --critic_learning_rate 9e-6 \
     --init_kl_coef 0.01 \
-    --prompt_data OpenLLMAI/prompt-collection-v0.1 \
+    --prompt_data OpenRLHF/prompt-collection-v0.1 \
     --input_key context_messages \
     --apply_chat_template \
     --max_samples 10000 \

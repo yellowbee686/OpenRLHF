@@ -16,19 +16,18 @@ def preprocess_data(
     apply_chat_template=None,
     is_dpo=False,
 ) -> str:
-    prompt = ""
-    chosen = data[chosen_key]
-    rejected = data[rejected_key]
-
     if apply_chat_template:
-        chosen = apply_chat_template(chosen, tokenize=False)
-        rejected = apply_chat_template(rejected, tokenize=False)
+        prompt = ""
+        chosen = apply_chat_template(data[chosen_key], tokenize=False)
+        rejected = apply_chat_template(data[rejected_key], tokenize=False)
 
         if is_dpo:
             prompt = apply_chat_template(data[chosen_key][:-1], tokenize=False, add_generation_prompt=True)
             chosen = chosen[len(prompt) :]
             rejected = rejected[len(prompt) :]
     else:
+        chosen = data[chosen_key]
+        rejected = data[rejected_key]
         if prompt_key:
             prompt = data[prompt_key]
             if input_template:
@@ -170,8 +169,12 @@ class RewardDataset(Dataset):
             rejects_masks.append(rejects_mask)
             extras.append(extra)
 
-        chosen_ids = zero_pad_sequences(chosen_ids, value=self.tokenizer.pad_token_id)
-        chosen_masks = zero_pad_sequences(chosen_masks)
-        reject_ids = zero_pad_sequences(reject_ids, value=self.tokenizer.pad_token_id)
-        rejects_masks = zero_pad_sequences(rejects_masks)
+        if self.is_dpo:
+            padding_side = "right"
+        else:
+            padding_side = "left"
+        chosen_ids = zero_pad_sequences(chosen_ids, side=padding_side, value=self.tokenizer.pad_token_id)
+        chosen_masks = zero_pad_sequences(chosen_masks, side=padding_side)
+        reject_ids = zero_pad_sequences(reject_ids, side=padding_side, value=self.tokenizer.pad_token_id)
+        rejects_masks = zero_pad_sequences(rejects_masks, side=padding_side)
         return chosen_ids, chosen_masks, reject_ids, rejects_masks, extras

@@ -1,3 +1,5 @@
+set -x
+
 checkSuccess() {
    if [[ $? != 0 ]]; then
       echo "FAILED $1"
@@ -14,7 +16,7 @@ ITER_LOG_PATH=null
 TRAINING_ITERS=5
 ROLLOUT_BATCH_SIZE=10240
 
-POLICY_MODEL_PATH=OpenLLMAI/Llama-3-8b-sft-mixture
+POLICY_MODEL_PATH=OpenRLHF/Llama-3-8b-sft-mixture
 REF_MODEL_PATH=$POLICY_MODEL_PATH
 
 iter=0
@@ -30,12 +32,12 @@ while (($iter < $TRAINING_ITERS)); do
    fi
 
    read -r -d '' generate_commands <<EOF
-../batch_inference.py
+openrlhf.cli.batch_inference
    --eval_task generate_vllm \
    --pretrain $POLICY_MODEL_PATH \
    --max_new_tokens 2048 \
    --prompt_max_len 2048 \
-   --dataset OpenLLMAI/prompt-collection-v0.1 \
+   --dataset OpenRLHF/prompt-collection-v0.1 \
    --input_key context_messages \
    --apply_chat_template \
    --temperature 1.0 \
@@ -48,13 +50,13 @@ while (($iter < $TRAINING_ITERS)); do
    --output_path $GENERATE_OUTPUT
 EOF
    echo $generate_commands
-   python $generate_commands
+   python -m $generate_commands
    checkSuccess "GENERATE"
 
    read -r -d '' get_rewards_commands <<EOF
-../batch_inference.py
+openrlhf.cli.batch_inference
    --eval_task rm \
-   --pretrain OpenLLMAI/Llama-3-8b-rm-mixture \
+   --pretrain OpenRLHF/Llama-3-8b-rm-mixture \
    --bf16 \
    --max_len 4096 \
    --dataset $GENERATE_OUTPUT  \
@@ -65,11 +67,11 @@ EOF
    --output_path $RM_OUTPUT
 EOF
    echo $get_rewards_commands
-   deepspeed $get_rewards_commands
+   deepspeed --module $get_rewards_commands
    checkSuccess "RM"
 
    read -r -d '' dpo_commands <<EOF
-../train_dpo.py \
+openrlhf.cli.train_dpo \
    --max_len 4096 \
    --dataset $RM_OUTPUT \
    --dataset_probs 1.0 \
@@ -80,12 +82,13 @@ EOF
    --save_path $MODEL_OUTPUT_PATH \
    --zero_stage 3 \
    --max_epochs 1 \
+   --input_template "" \
    --bf16 \
    --learning_rate 5e-7 \
    --gradient_checkpointing
 EOF
    echo $dpo_commands
-   deepspeed $dpo_commands
+   deepspeed --module $dpo_commands
    checkSuccess "DPO"
 
    iter=$((iter + 1))

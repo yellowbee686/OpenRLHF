@@ -1,9 +1,9 @@
 set -x 
 
 read -r -d '' training_commands <<EOF
-../train_ppo.py \
-   --pretrain OpenLLMAI/Llama-3-8b-sft-mixture \
-   --reward_pretrain OpenLLMAI/Llama-3-8b-rm-mixture \
+openrlhf.cli.train_ppo \
+   --pretrain OpenRLHF/Llama-3-8b-sft-mixture \
+   --reward_pretrain OpenRLHF/Llama-3-8b-rm-mixture \
    --save_path ./checkpoint/llama-3-8b-rlhf \
    --save_steps -1 \
    --logging_steps 1 \
@@ -20,7 +20,7 @@ read -r -d '' training_commands <<EOF
    --actor_learning_rate 5e-7 \
    --critic_learning_rate 9e-6 \
    --init_kl_coef 0.01 \
-   --prompt_data OpenLLMAI/prompt-collection-v0.1 \
+   --prompt_data OpenRLHF/prompt-collection-v0.1 \
    --input_key context_messages \
    --apply_chat_template \
    --max_samples 100000 \
@@ -29,8 +29,8 @@ read -r -d '' training_commands <<EOF
    --flash_attn \
    --gradient_checkpointing
 EOF
-     # --wandb [WANDB_TOKENS] or True (use wandb login command)
+    # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
 if [[ ${1} != "slurm" ]]; then
-    deepspeed $training_commands
+    deepspeed --module $training_commands
 fi

@@ -1,14 +1,14 @@
 set -x 
 
 read -r -d '' training_commands <<EOF
-../train_kto.py \
+openrlhf.cli.train_kto \
    --save_path ./checkpoint/llama3-8b-kto \
    --save_steps -1 \
    --logging_steps 1 \
    --eval_steps -1 \
    --train_batch_size 64 \
    --micro_train_batch_size 1 \
-   --pretrain OpenLLMAI/Llama-3-8b-sft-mixture \
+   --pretrain OpenRLHF/Llama-3-8b-sft-mixture \
    --bf16 \
    --max_epochs 1 \
    --max_len 8192 \
@@ -23,9 +23,9 @@ read -r -d '' training_commands <<EOF
    --max_samples 1024 \
    --gradient_checkpointing
 EOF
-     # --wandb [WANDB_TOKENS] or True (use wandb login command)
+    # --wandb [WANDB_TOKENS] or True (use wandb login command)
 
 
 if [[ ${1} != "slurm" ]]; then
-    deepspeed $training_commands
+    deepspeed --module $training_commands
 fi
