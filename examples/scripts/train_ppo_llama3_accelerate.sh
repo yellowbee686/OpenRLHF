@@ -4,7 +4,7 @@ export CUDA_VISIBLE_DEVICES='4,5,6,7'
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 read -r -d '' training_commands <<EOF
-../train_ppo.py \
+openrlhf.cli.train_ppo.py \
     --pretrain RLHFlow/LLaMA3-SFT \
     --reward_pretrain sfairXC/FsfairX-LLaMA3-RM-v0.1 \
     --save_path ./ckpt/llama3_8b_bt \
