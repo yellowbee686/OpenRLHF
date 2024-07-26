@@ -66,13 +66,13 @@ def get_seqlens_in_batch(attention_mask: "torch.Tensor") -> "torch.Tensor":
     """
     bsz = attention_mask.size(0)
     dtype, device = attention_mask.dtype, attention_mask.device
-    max_num = torch.max(attention_mask)
+    max_num = torch.max(attention_mask).item()
     counts: "torch.Tensor" = torch.zeros((bsz, max_num), dtype=dtype, device=device)
     for i in range(max_num):
         counts[:, i] = torch.sum(attention_mask == (i + 1), dim=-1)
 
     counts = counts.flatten()
-    seqlens = counts[counts.nonzero().squeeze()]
+    seqlens = counts[counts.nonzero().squeeze(dim=-1)]
     return seqlens
 
 
@@ -106,23 +106,36 @@ def get_unpad_data(attention_mask: "torch.Tensor") -> Tuple["torch.Tensor", "tor
 
 
 def patch_for_block_diag_attn(model_type: str) -> None:
-    if model_type == "falcon":
-        transformers.models.falcon.modeling_falcon._get_unpad_data = get_unpad_data
-    elif model_type == "gemma":
-        transformers.models.gemma.modeling_gemma._get_unpad_data = get_unpad_data
-    elif model_type == "gemma2":
-        transformers.models.gemma2.modeling_gemma2._get_unpad_data = get_unpad_data
-    elif model_type == "llama":
-        transformers.models.llama.modeling_llama._get_unpad_data = get_unpad_data
-    elif model_type == "mistral":
-        transformers.models.mistral.modeling_mistral._get_unpad_data = get_unpad_data
-    elif model_type == "phi":
-        transformers.models.phi.modeling_phi._get_unpad_data = get_unpad_data
-    elif model_type == "phi3":
-        transformers.models.phi3.modeling_phi3._get_unpad_data = get_unpad_data
-    elif model_type == "qwen2":
-        transformers.models.qwen2.modeling_qwen2._get_unpad_data = get_unpad_data
-    elif model_type == "starcoder2":
-        transformers.models.starcoder2.modeling_starcoder2._get_unpad_data = get_unpad_data
+    print(f"patch_for_block_diag_attn: {model_type}")
+
+    # https://github.com/huggingface/transformers/pull/31446
+    if hasattr(transformers, "modeling_flash_attention_utils"):
+        transformers.modeling_flash_attention_utils._get_unpad_data = get_unpad_data
     else:
-        raise Exception(f"{model_type} does not support packing samples with Flash Attention 2")
+        # for transformers <= v4.42.4
+        if model_type == "cohere":
+            transformers.models.cohere.modeling_cohere._get_unpad_data = get_unpad_data
+        elif model_type == "falcon":
+            transformers.models.falcon.modeling_falcon._get_unpad_data = get_unpad_data
+        elif model_type == "gemma":
+            transformers.models.gemma.modeling_gemma._get_unpad_data = get_unpad_data
+        elif model_type == "gemma2":
+            transformers.models.gemma2.modeling_gemma2._get_unpad_data = get_unpad_data
+        elif model_type == "llama":
+            transformers.models.llama.modeling_llama._get_unpad_data = get_unpad_data
+        elif model_type == "mistral":
+            transformers.models.mistral.modeling_mistral._get_unpad_data = get_unpad_data
+        elif model_type == "mixtral":
+            transformers.models.mixtral.modeling_mixtral._get_unpad_data = get_unpad_data
+        elif model_type == "phi":
+            transformers.models.phi.modeling_phi._get_unpad_data = get_unpad_data
+        elif model_type == "phi3":
+            transformers.models.phi3.modeling_phi3._get_unpad_data = get_unpad_data
+        elif model_type == "qwen2":
+            transformers.models.qwen2.modeling_qwen2._get_unpad_data = get_unpad_data
+        elif model_type == "qwen2_moe":
+            transformers.models.qwen2_moe.modeling_qwen2_moe._get_unpad_data = get_unpad_data
+        elif model_type == "starcoder2":
+            transformers.models.starcoder2.modeling_starcoder2._get_unpad_data = get_unpad_data
+        else:
+            raise Exception(f"Unsupported mode type {model_type} for patch_for_block_diag_attn!")

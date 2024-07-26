@@ -187,7 +187,7 @@ deepspeed --module openrlhf.cli.train_sft \
 ```
 
 > [!NOTE]
-> OpenRLHF SFT 支持的 `--packing_samples` [基于 `--flash_attn`](https://github.com/MeetKai/functionary/tree/main/functionary/train/packing)
+> OpenRLHF SFT/DPO/RewardModel 训练支持 `--packing_samples` [基于 `--flash_attn`](https://github.com/MeetKai/functionary/tree/main/functionary/train/packing)
 
 ### Reward Model Training
 ```bash
@@ -211,6 +211,9 @@ deepspeed --module openrlhf.cli.train_rm \
    --flash_attn \
    --gradient_checkpointing \
    --use_wandb {wandb_token}
+
+# RM samples packing
+# --packing_samples
 ```
 
 ### 不使用 Ray 的 PPO
@@ -366,6 +369,8 @@ ray job submit --address="http://127.0.0.1:8265" \
 - [Ray ↗](https://github.com/ray-project/ray)
 
 我们的项目还想要感谢 [ColossalChat](https://github.com/hpcaitech/ColossalAI/tree/main/applications/Chat) 和 [DeepSpeedChat](https://github.com/microsoft/DeepSpeedExamples/tree/master/applications/DeepSpeed-Chat)。在项目的早期阶段，我们参考了他们的代码设计。
+
+(2024/7) 我们的 GitHub 组织从 OpenLLMAI 迁移到了 OpenRLHF.
 
 ## 引用
 ```

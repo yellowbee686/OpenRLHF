@@ -9,7 +9,6 @@ from tqdm import tqdm
 from transformers.trainer import get_scheduler
 
 from openrlhf.datasets import SFTDataset
-from openrlhf.datasets.packing_utils import patch_for_block_diag_attn
 from openrlhf.models import GPTLMLoss
 
 
@@ -63,12 +62,6 @@ class SFTTrainer(ABC):
 
         # packing samples
         self.packing_samples = strategy.args.packing_samples
-
-        # packing samples using Flash Attention 2
-        if self.packing_samples:
-            assert strategy.args.flash_attn, "Only support `--packing_samples` with Flash Attention 2."
-            model_type = getattr(strategy._unwrap_model(model).config, "model_type", None)
-            patch_for_block_diag_attn(model_type)
 
         # wandb setting
         self._wandb = None
@@ -126,9 +119,7 @@ class SFTTrainer(ABC):
                     inputs = inputs.to(torch.cuda.current_device()).squeeze(1)
                     attention_mask = attention_masks.to(torch.cuda.current_device()).squeeze(1)
 
-                output = self.model(
-                    inputs, attention_mask=attention_mask, return_output=True, packing_samples=self.packing_samples
-                )
+                output = self.model(inputs, attention_mask=attention_mask, return_output=True)
 
                 # loss function
                 labels = torch.where(
@@ -214,9 +205,7 @@ class SFTTrainer(ABC):
                     inputs = inputs.to(torch.cuda.current_device()).squeeze(1)
                     attention_mask = attention_masks.to(torch.cuda.current_device()).squeeze(1)
 
-                output = self.model(
-                    inputs, attention_mask=attention_mask, return_output=True, packing_samples=self.packing_samples
-                )
+                output = self.model(inputs, attention_mask=attention_mask, return_output=True)
 
                 # loss function
                 labels = torch.where(

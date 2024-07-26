@@ -4,12 +4,14 @@ import deepspeed
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from peft import LoraConfig, TaskType, get_peft_model
 from peft.tuners.lora import LoraLayer
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, PreTrainedModel
 from transformers.deepspeed import HfDeepSpeedConfig
 
-from .utils import log_probs_from_logits
+from .packing_utils import patch_for_block_diag_attn
+from .utils import log_probs_from_logits, reset_position_ids
 
 
 class Actor(nn.Module):
@@ -34,6 +36,7 @@ class Actor(nn.Module):
         target_modules=None,
         ds_config=None,
         device_map=None,
+        packing_samples=False,
         **kwargs,
     ) -> None:
         super().__init__()
@@ -101,6 +104,13 @@ class Actor(nn.Module):
             # https://github.com/huggingface/transformers/issues/26877
             # Use `model.generate(use_cache=True)` instead.`
             self.model.config.use_cache = False
+
+            # packing samples using Flash Attention 2
+            self.packing_samples = packing_samples
+            if packing_samples:
+                assert use_flash_attention_2, "Only support `--packing_samples` with Flash Attention 2."
+                model_type = getattr(self.model.config, "model_type", None)
+                patch_for_block_diag_attn(model_type)
         else:
             self.model = pretrain_or_model
 
@@ -174,15 +184,15 @@ class Actor(nn.Module):
         num_actions: int = None,
         attention_mask: Optional[torch.Tensor] = None,
         return_output=False,
-        packing_samples=False,
     ) -> torch.Tensor:
         """Returns action log probs"""
-        if not packing_samples:
+        if not self.packing_samples:
             # https://github.com/OpenRLHF/OpenRLHF/issues/217
             position_ids = attention_mask.long().cumsum(-1) - 1
-            position_ids.masked_fill_(attention_mask == 0, 1)
         else:
-            position_ids = None
+            # reset the positions for packed samples
+            position_ids = reset_position_ids(attention_mask)
+        position_ids.masked_fill_(attention_mask == 0, 1)
 
         output = self.model(sequences, attention_mask=attention_mask, position_ids=position_ids)
         log_probs = log_probs_from_logits(output["logits"][:, :-1, :], sequences[:, 1:])
