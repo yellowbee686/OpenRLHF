@@ -267,6 +267,11 @@ def train(args):
 
     trainer.fit(args, prompts_dataloader, pretrain_dataloader, consumed_samples, num_update_steps_per_episodes)
 
+    # clear model to avoid OOM
+    del initial_model.model
+    del reward_model
+    torch.cuda.empty_cache()
+
     # save model checkpoint after fitting on only rank0
     strategy.save_model(
         ema_model if args.enable_ema else actor,
@@ -274,7 +279,10 @@ def train(args):
         args.save_path,
     )
 
-    if args.critic_pretrain and args.save_value_network:
+    del actor.model
+    torch.cuda.empty_cache()
+
+    if args.save_value_network:
         strategy.save_model(
             critic,
             tokenizer,
@@ -290,6 +298,7 @@ if __name__ == "__main__":
     parser.add_argument("--logging_steps", type=int, default=1)
     parser.add_argument("--eval_steps", type=int, default=-1)
     parser.add_argument("--ckpt_path", type=str, default="./ckpt/checkpoints_ppo")
+    parser.add_argument("--load_ckpt_path", type=str, default="./ckpt/checkpoints_ppo")
     parser.add_argument("--max_ckpt_num", type=int, default=3)
     parser.add_argument("--max_ckpt_mem", type=int, default=1e8)
     parser.add_argument("--load_checkpoint", action="store_true", default=False)
